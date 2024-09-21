@@ -8,12 +8,8 @@
 <script>
 
 /* The user can rotate the model using the keyboard, and
- * can turn animation on and off.  As an example, it shows  a sphere
- * rotating around a cube.
- *
- * To make your own model, add any global variables that you need for
- * animating the model, build the model in the createWorld() function,
- * and update the animation variables in the updateForFrame() function.
+ * can turn animation on and off. It shows various objects rotating
+ * around a cube, including a sphere, torus knot,
  */
 
 "use strict";
@@ -30,9 +26,15 @@ var model;   // Contains the visible objects in the scene, but
 // Nodes in the scene graphs that are modified as part of the animation:
 var sphereRotator;  // The sphere is a child of this object; rotating
                     // this object about the y-axis rotates the sphere.
+var torusKnotRotator; // The torus knot is a child of this object; rotating
+                      // this object about the z-axis rotates the torus knot.
 
-var animating = false;  // This is set to true when an animation is running.
+var animating = false;  // Global animation control
+						// This is set to true when an animation is running.
 
+// Individual animation controls for the shapes
+var sphereAnimating = true;
+var torusKnotAnimating = true;
 
 /*  Create the scene graph.  This function is called once, as soon as the page loads.
  *  The renderer has already been created before this function is called.
@@ -88,7 +90,7 @@ function render() {
  *  for that frame.
  */
 function updateForFrame() {
-    sphereRotator.rotation.y += 0.03;
+	if (sphereAnimating) sphereRotator.rotation.y += 0.03;
 }
 
 
@@ -121,6 +123,13 @@ function doAnimateCheckbox() {
 	}
 }
 
+/* Responds when the setting of the "Sphere" checkbox is changed.  This
+ * function will start or stop the sphere animation, depending on its setting.
+ */
+ function doSphereCheckbox() {
+    var sph = document.getElementById("sphereAnim").checked;
+	sphereAnimating = sph;
+}
 
 
 //----------------------------- keyboard support ----------------------------------
@@ -171,6 +180,8 @@ function init() {
 	document.addEventListener("keydown", doKey, false);
 	document.getElementById("animate").checked = false;
 	document.getElementById("animate").onchange = doAnimateCheckbox;
+	document.getElementById("sphereAnim").checked = true;
+	document.getElementById("sphereAnim").onchange = doSphereCheckbox;
 	createWorld();
 	render();
 }
@@ -184,7 +195,8 @@ function init() {
 <p><b>Based on modeling-starter.html and diskworld-1.html from the course readings.</b></p>
 <p><b>Use Arrow, PageUp, PageDown, and Home keys to rotate the model.</b></p>
 
-<p><label><input type="checkbox" id="animate">Animate</label>
+<p><label><input type="checkbox" id="animate">Animate All</label>
+<label><input type="checkbox" id="sphereAnim">Sphere</label>
 </p>
 
 <div id="canvas-holder">
