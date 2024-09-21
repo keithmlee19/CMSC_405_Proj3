@@ -9,7 +9,7 @@
 
 /* The user can rotate the model using the keyboard, and
  * can turn animation on and off. It shows various objects rotating
- * around a cube, including a sphere, torus knot,
+ * around a cube, including a dodecahedron, sphere, torus knot, torus
  */
 
 "use strict";
@@ -24,17 +24,20 @@ var model;   // Contains the visible objects in the scene, but
 			 // rotated using the keyboard. 
 
 // Nodes in the scene graphs that are modified as part of the animation:
+var dodecahedronRotator;  // The dodecahedron is a child of this object; rotating
+                   		  // this object about the x- and z-axes rotates the dodecahedron.
 var sphereRotator;  // The sphere is a child of this object; rotating
                     // this object about the y-axis rotates the sphere.
 var torusKnotRotator;  // The torus knot is a child of this object; rotating
                        // this object about the z-axis rotates the torus knot.
 var torusRotator;  // The torus is a child of this object; rotating
-                   // this object about the x-axis rotates the torus.					  
+                   // this object about the x- and z-axes rotates the torus.					  
 
 var animating = false;  // Global animation control
 						// This is set to true when an animation is running.
 
 // Individual animation controls for the shapes
+var dodecahedronAnimating = true;
 var sphereAnimating = true;
 var torusKnotAnimating = true;
 var torusAnimating = true;
@@ -43,7 +46,7 @@ var torusAnimating = true;
  *  The renderer has already been created before this function is called.
  */
 function createWorld() {
-    renderer.setClearColor( 0xb5b5b5 );  // Set background color (0xb5b5b5 is light gray).
+    renderer.setClearColor( 0xd5d5d5 );  // Set background color (0xd5d5d5 is light gray).
 	scene = new THREE.Scene();
 	
 	// create a camera, sitting on the positive z-axis.  The camera is not part of the scene.
@@ -55,7 +58,7 @@ function createWorld() {
 	var viewpointLight = new THREE.DirectionalLight( 0xffffff, 0.8 );  // a light to shine in the direction the camera faces
 	viewpointLight.position.set(0,0,1);  // shines down the z-axis
 	scene.add(viewpointLight);
-	var spotLight = new THREE.SpotLight( 0xffff00, 50 ); // yellow spotlight
+	var spotLight = new THREE.SpotLight( 0xffff00, 20 ); // yellow spotlight
 	spotLight.position.set(1,2,1);
 	spotLight.castShadow = true; // creates shadow effect
 	scene.add(spotLight);
@@ -95,7 +98,7 @@ function createWorld() {
 	model.add(torusKnotRotator);
 
 	var torus = new THREE.Mesh(  // add light coral torus
-	    new THREE.TorusGeometry(0.45,0.1,12,48),
+	    new THREE.TorusGeometry(0.5,0.1,12,48),
 		new THREE.MeshPhongMaterial({
 		    color: "lightcoral",
 			specular: 0x101010,
@@ -106,6 +109,19 @@ function createWorld() {
 	torusRotator = new THREE.Object3D();
 	torusRotator.add(torus);
 	model.add(torusRotator);
+
+	var dodecahedron = new THREE.Mesh(  // add orange dodecahedron
+	    new THREE.DodecahedronGeometry(0.65),
+		new THREE.MeshPhongMaterial({
+		    color: "orange",
+			specular: 0x101010,
+			shininess: 10
+		})
+	);
+	dodecahedron.position.y = -4;
+	dodecahedronRotator = new THREE.Object3D();
+	dodecahedronRotator.add(dodecahedron);
+	model.add(dodecahedronRotator);
 
 	model.rotation.set(0.2,0,0); // Tip it forward a bit, so we're not looking at it edge-on.
 	
@@ -134,6 +150,10 @@ function updateForFrame() {
 	if (torusAnimating) {
 		torusRotator.rotation.x += 0.01;
 		torusRotator.rotation.z += 0.02;
+	}
+	if (dodecahedronAnimating) {
+		dodecahedronRotator.rotation.x -= 0.01;
+		dodecahedronRotator.rotation.z -= 0.02;
 	}
 }
 
@@ -186,6 +206,13 @@ function doAnimateCheckbox() {
  */
  function doTorusCheckbox() {
     torusAnimating = document.getElementById("torusAnim").checked;
+}
+
+/* Responds when the setting of the "dodecahedron" checkbox is changed.  This
+ * function will start or stop the dodecahedron animation, depending on its setting.
+ */
+ function doDodecahedronCheckbox() {
+    dodecahedronAnimating = document.getElementById("dodecahedronAnim").checked;
 }
 
 
@@ -243,6 +270,8 @@ function init() {
 	document.getElementById("torusKnotAnim").onchange = doTorusKnotCheckbox;
 	document.getElementById("torusAnim").checked = true;
 	document.getElementById("torusAnim").onchange = doTorusCheckbox;
+	document.getElementById("dodecahedronAnim").checked = true;
+	document.getElementById("dodecahedronAnim").onchange = doDodecahedronCheckbox;
 	createWorld();
 	render();
 }
@@ -253,13 +282,13 @@ function init() {
 
 <h2>Project 3: Three.js Animated Model</h2>
 
-<p><b>Based on modeling-starter.html and diskworld-1.html from the course readings.</b></p>
+<p><b>Based on modeling-starter.html from the course readings.</b></p>
 <p><b>Use Arrow, PageUp, PageDown, and Home keys to rotate the model.</b></p>
 <p><b>Check or uncheck the Animate All box to start/stop all animation.</b></p>
-
 <p><label><input type="checkbox" id="animate">Animate All</label></p>
-<p><b>Check or uncheck the boxes to turn individual element animations on/off.</b></p>
-<p><label><input type="checkbox" id="sphereAnim">Sphere</label>
+<p><b>Check or uncheck the boxes to turn individual shape animations on/off.</b></p>
+<p><label><label><input type="checkbox" id="dodecahedronAnim">Dodecahedron</label>
+<input type="checkbox" id="sphereAnim">Sphere</label>
 <label><input type="checkbox" id="torusKnotAnim">Torus Knot</label>
 <label><input type="checkbox" id="torusAnim">Torus</label>
 </p>
