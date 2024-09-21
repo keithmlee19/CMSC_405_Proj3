@@ -26,8 +26,10 @@ var model;   // Contains the visible objects in the scene, but
 // Nodes in the scene graphs that are modified as part of the animation:
 var sphereRotator;  // The sphere is a child of this object; rotating
                     // this object about the y-axis rotates the sphere.
-var torusKnotRotator; // The torus knot is a child of this object; rotating
-                      // this object about the z-axis rotates the torus knot.
+var torusKnotRotator;  // The torus knot is a child of this object; rotating
+                       // this object about the z-axis rotates the torus knot.
+var torusRotator;  // The torus is a child of this object; rotating
+                   // this object about the x-axis rotates the torus.					  
 
 var animating = false;  // Global animation control
 						// This is set to true when an animation is running.
@@ -35,6 +37,7 @@ var animating = false;  // Global animation control
 // Individual animation controls for the shapes
 var sphereAnimating = true;
 var torusKnotAnimating = true;
+var torusAnimating = true;
 
 /*  Create the scene graph.  This function is called once, as soon as the page loads.
  *  The renderer has already been created before this function is called.
@@ -54,7 +57,7 @@ function createWorld() {
 	scene.add(viewpointLight);
 	var spotLight = new THREE.SpotLight( 0xffff00, 50 ); // yellow spotlight
 	spotLight.position.set(1,2,1);
-	spotLight.castShadow = true;
+	spotLight.castShadow = true; // creates shadow effect
 	scene.add(spotLight);
 	
 	// create the model 
@@ -65,7 +68,7 @@ function createWorld() {
 		new THREE.MeshLambertMaterial({ color: 0xb7b7ff })
 	));
 
-	var sphere = new THREE.Mesh(
+	var sphere = new THREE.Mesh(  // add blue sphere
 	    new THREE.SphereGeometry(0.75,32,16),
 		new THREE.MeshPhongMaterial({
 		    color: "blue",
@@ -78,7 +81,7 @@ function createWorld() {
 	sphereRotator.add(sphere);
 	model.add(sphereRotator);
 
-	var torusKnot = new THREE.Mesh(
+	var torusKnot = new THREE.Mesh(  // add green torus knot
 	    new THREE.TorusKnotGeometry(0.55,0.15,32,16),
 		new THREE.MeshPhongMaterial({
 		    color: "green",
@@ -90,6 +93,19 @@ function createWorld() {
 	torusKnotRotator = new THREE.Object3D();
 	torusKnotRotator.add(torusKnot);
 	model.add(torusKnotRotator);
+
+	var torus = new THREE.Mesh(  // add light coral torus
+	    new THREE.TorusGeometry(0.45,0.1,12,48),
+		new THREE.MeshPhongMaterial({
+		    color: "lightcoral",
+			specular: 0x101010,
+			shininess: 20
+		})
+	);
+	torus.position.y = 4;
+	torusRotator = new THREE.Object3D();
+	torusRotator.add(torus);
+	model.add(torusRotator);
 
 	model.rotation.set(0.2,0,0); // Tip it forward a bit, so we're not looking at it edge-on.
 	
@@ -114,6 +130,10 @@ function updateForFrame() {
 	}
 	if (torusKnotAnimating) {
 		torusKnotRotator.rotation.z += 0.04;
+	}
+	if (torusAnimating) {
+		torusRotator.rotation.x += 0.01;
+		torusRotator.rotation.z += 0.02;
 	}
 }
 
@@ -159,6 +179,13 @@ function doAnimateCheckbox() {
  */
  function doTorusKnotCheckbox() {
     torusKnotAnimating = document.getElementById("torusKnotAnim").checked;
+}
+
+/* Responds when the setting of the "torus" checkbox is changed.  This
+ * function will start or stop the torus animation, depending on its setting.
+ */
+ function doTorusCheckbox() {
+    torusAnimating = document.getElementById("torusAnim").checked;
 }
 
 
@@ -214,6 +241,8 @@ function init() {
 	document.getElementById("sphereAnim").onchange = doSphereCheckbox;
 	document.getElementById("torusKnotAnim").checked = true;
 	document.getElementById("torusKnotAnim").onchange = doTorusKnotCheckbox;
+	document.getElementById("torusAnim").checked = true;
+	document.getElementById("torusAnim").onchange = doTorusCheckbox;
 	createWorld();
 	render();
 }
@@ -232,6 +261,7 @@ function init() {
 <p><b>Check or uncheck the boxes to turn individual element animations on/off.</b></p>
 <p><label><input type="checkbox" id="sphereAnim">Sphere</label>
 <label><input type="checkbox" id="torusKnotAnim">Torus Knot</label>
+<label><input type="checkbox" id="torusAnim">Torus</label>
 </p>
 
 <div id="canvas-holder">
