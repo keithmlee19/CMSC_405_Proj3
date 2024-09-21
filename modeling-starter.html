@@ -40,7 +40,7 @@ var torusKnotAnimating = true;
  *  The renderer has already been created before this function is called.
  */
 function createWorld() {
-    renderer.setClearColor( 0x444444 );  // Set background color (0x444444 is dark gray).
+    renderer.setClearColor( 0xb5b5b5 );  // Set background color (0xb5b5b5 is light gray).
 	scene = new THREE.Scene();
 	
 	// create a camera, sitting on the positive z-axis.  The camera is not part of the scene.
@@ -56,9 +56,9 @@ function createWorld() {
 	// create the model 
 	model = new THREE.Object3D();
 
-	model.add( new THREE.Mesh(  // add a cube at the origin; the cube is not animated
-	    new THREE.BoxGeometry(2,2,2),
-		new THREE.MeshLambertMaterial({ color: 0xff7700 })
+	model.add( new THREE.Mesh(  // add a light blue cube at the origin; the cube is not animated
+	    new THREE.BoxGeometry(1.75,1.75,1.75),
+		new THREE.MeshLambertMaterial({ color: 0xb7b7ff })
 	));
 
 	var sphere = new THREE.Mesh(
@@ -105,9 +105,14 @@ function render() {
  *  for that frame.
  */
 function updateForFrame() {
-	if (sphereAnimating) sphereRotator.rotation.y += 0.03;
-	if (torusKnotAnimating) torusKnotRotator.rotation.z += 0.04;
+	if (sphereAnimating) {
+		sphereRotator.rotation.y += 0.03;
+	}
+	if (torusKnotAnimating) {
+		torusKnotRotator.rotation.z += 0.04;
+	}
 }
+
 
 
 //--------------------------- animation support -----------------------------------
@@ -124,7 +129,6 @@ function doFrame() {
         requestAnimationFrame(doFrame); 
 	}
 }
-
 
 /* Responds when the setting of the "Animate" checkbox is changed.  This
  * function will start or stop the animation, depending on its setting.
@@ -218,10 +222,11 @@ function init() {
 
 <p><b>Based on modeling-starter.html and diskworld-1.html from the course readings.</b></p>
 <p><b>Use Arrow, PageUp, PageDown, and Home keys to rotate the model.</b></p>
-<p><b>Check or uncheck the boxes to start or stop individual shapes animating.</b></p>
+<p><b>Check or uncheck the Animate All box to start/stop all animation.</b></p>
 
-<p><label><input type="checkbox" id="animate">Animate All</label>
-<label><input type="checkbox" id="sphereAnim">Sphere</label>
+<p><label><input type="checkbox" id="animate">Animate All</label></p>
+<p><b>Check or uncheck the boxes to turn individual element animations on/off.</b></p>
+<p><label><input type="checkbox" id="sphereAnim">Sphere</label>
 <label><input type="checkbox" id="torusKnotAnim">Torus Knot</label>
 </p>
 
