@@ -1,23 +1,19 @@
 <!DOCTYPE html>
 <head>
 <meta charset="UTF-8">
-<title>Three.js Modeling</title>
+<title>Project 3: Three.js Modeling</title>
 <style>
 </style>
 <script src="three.min.js"></script>
 <script>
 
-/* This is a starter file for experimenting with 3D animated models
- * in three.js.  The user can rotate the model using the keyboard, and
+/* The user can rotate the model using the keyboard, and
  * can turn animation on and off.  As an example, it shows  a sphere
  * rotating around a cube.
  *
  * To make your own model, add any global variables that you need for
  * animating the model, build the model in the createWorld() function,
  * and update the animation variables in the updateForFrame() function.
- *
- * For a more complex modeling example using this framework,
- * see diskworld-1.html.
  */
 
 "use strict";
@@ -57,18 +53,14 @@ function createWorld() {
 	
 	// create the model 
 	model = new THREE.Object3D();
-	model.add( new THREE.Mesh(  // add a big cube at the origin; the cube is not animated
-	    new THREE.BoxGeometry(3,3,3),
+	model.add( new THREE.Mesh(  // add a cube at the origin; the cube is not animated
+	    new THREE.BoxGeometry(2,2,2),
 		new THREE.MeshLambertMaterial({ color: 0xff7700 })
 	));
-	model.add( new THREE.Mesh(  // A tall narrow cylinder on the axis of rotation
-        new THREE.CylinderGeometry(0.3,0.3,8),
-		new THREE.MeshLambertMaterial({ color: 0x0000AA })
-	));
 	var sphere = new THREE.Mesh(
-	    new THREE.SphereGeometry(1,32,16),
+	    new THREE.SphereGeometry(0.75,32,16),
 		new THREE.MeshPhongMaterial({
-		    color: "green",
+		    color: "blue",
 			specular: 0x101010,
 			shininess: 32
 		})
@@ -187,15 +179,16 @@ function init() {
 </head>
 <body onload="init()">
 
-<h2>Three.js Animated Model</h2>
+<h2>Project 3: Three.js Animated Model</h2>
 
+<p><b>Based on modeling-starter.html and diskworld-1.html from the course readings.</b></p>
 <p><b>Use Arrow, PageUp, PageDown, and Home keys to rotate the model.</b></p>
 
 <p><label><input type="checkbox" id="animate">Animate</label>
 </p>
 
 <div id="canvas-holder">
-<canvas id="glcanvas" width="500" height="500"></canvas>
+<canvas id="glcanvas" width="640" height="480"></canvas>
 </div>
 
 </body>
