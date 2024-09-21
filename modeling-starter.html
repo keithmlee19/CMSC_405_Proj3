@@ -55,10 +55,12 @@ function createWorld() {
 	
 	// create the model 
 	model = new THREE.Object3D();
+
 	model.add( new THREE.Mesh(  // add a cube at the origin; the cube is not animated
 	    new THREE.BoxGeometry(2,2,2),
 		new THREE.MeshLambertMaterial({ color: 0xff7700 })
 	));
+
 	var sphere = new THREE.Mesh(
 	    new THREE.SphereGeometry(0.75,32,16),
 		new THREE.MeshPhongMaterial({
@@ -71,6 +73,19 @@ function createWorld() {
 	sphereRotator = new THREE.Object3D();
 	sphereRotator.add(sphere);
 	model.add(sphereRotator);
+
+	var torusKnot = new THREE.Mesh(
+	    new THREE.TorusKnotGeometry(0.55,0.15,32,16),
+		new THREE.MeshPhongMaterial({
+		    color: "green",
+			specular: 0x101010,
+			shininess: 16
+		})
+	);
+	torusKnot.position.x = -4;
+	torusKnotRotator = new THREE.Object3D();
+	torusKnotRotator.add(torusKnot);
+	model.add(torusKnotRotator);
 
 	model.rotation.set(0.2,0,0); // Tip it forward a bit, so we're not looking at it edge-on.
 	
@@ -91,6 +106,7 @@ function render() {
  */
 function updateForFrame() {
 	if (sphereAnimating) sphereRotator.rotation.y += 0.03;
+	if (torusKnotAnimating) torusKnotRotator.rotation.z += 0.04;
 }
 
 
@@ -127,8 +143,14 @@ function doAnimateCheckbox() {
  * function will start or stop the sphere animation, depending on its setting.
  */
  function doSphereCheckbox() {
-    var sph = document.getElementById("sphereAnim").checked;
-	sphereAnimating = sph;
+    sphereAnimating = document.getElementById("sphereAnim").checked;
+}
+
+/* Responds when the setting of the "TorusKnot" checkbox is changed.  This
+ * function will start or stop the torus knot animation, depending on its setting.
+ */
+ function doTorusKnotCheckbox() {
+    torusKnotAnimating = document.getElementById("torusKnotAnim").checked;
 }
 
 
@@ -182,6 +204,8 @@ function init() {
 	document.getElementById("animate").onchange = doAnimateCheckbox;
 	document.getElementById("sphereAnim").checked = true;
 	document.getElementById("sphereAnim").onchange = doSphereCheckbox;
+	document.getElementById("torusKnotAnim").checked = true;
+	document.getElementById("torusKnotAnim").onchange = doTorusKnotCheckbox;
 	createWorld();
 	render();
 }
@@ -194,9 +218,11 @@ function init() {
 
 <p><b>Based on modeling-starter.html and diskworld-1.html from the course readings.</b></p>
 <p><b>Use Arrow, PageUp, PageDown, and Home keys to rotate the model.</b></p>
+<p><b>Check or uncheck the boxes to start or stop individual shapes animating.</b></p>
 
 <p><label><input type="checkbox" id="animate">Animate All</label>
 <label><input type="checkbox" id="sphereAnim">Sphere</label>
+<label><input type="checkbox" id="torusKnotAnim">Torus Knot</label>
 </p>
 
 <div id="canvas-holder">
