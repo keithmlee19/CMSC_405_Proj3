@@ -9,7 +9,8 @@
 
 /* The user can rotate the model using the keyboard, and
  * can turn animation on and off. It shows various objects rotating
- * around a cube, including a dodecahedron, sphere, torus knot, torus
+ * around a cube, including a dodecahedron, sphere, tetrahedron,
+ * torus knot, and torus.
  */
 
 "use strict";
@@ -28,6 +29,8 @@ var dodecahedronRotator;  // The dodecahedron is a child of this object; rotatin
                    		  // this object about the x- and z-axes rotates the dodecahedron.
 var sphereRotator;  // The sphere is a child of this object; rotating
                     // this object about the y-axis rotates the sphere.
+var tetrahedronRotator;  // The tetrahedron is a child of this object; rotating
+						 // this object about the x-axis rotates the tetrahedron.					
 var torusKnotRotator;  // The torus knot is a child of this object; rotating
                        // this object about the z-axis rotates the torus knot.
 var torusRotator;  // The torus is a child of this object; rotating
@@ -39,6 +42,7 @@ var animating = false;  // Global animation control
 // Individual animation controls for the shapes
 var dodecahedronAnimating = true;
 var sphereAnimating = true;
+var tetrahedronAnimating = true;
 var torusKnotAnimating = true;
 var torusAnimating = true;
 
@@ -60,7 +64,7 @@ function createWorld() {
 	scene.add(viewpointLight);
 	var spotLight = new THREE.SpotLight( 0xffff00, 20 ); // yellow spotlight
 	spotLight.position.set(1,2,1);
-	spotLight.castShadow = true; // creates shadow effect
+	spotLight.castShadow = true; // creates shadow effect from spotlight
 	scene.add(spotLight);
 	
 	// create the model 
@@ -115,13 +119,26 @@ function createWorld() {
 		new THREE.MeshPhongMaterial({
 		    color: "orange",
 			specular: 0x101010,
-			shininess: 10
+			shininess: 12
 		})
 	);
 	dodecahedron.position.y = -4;
 	dodecahedronRotator = new THREE.Object3D();
 	dodecahedronRotator.add(dodecahedron);
 	model.add(dodecahedronRotator);
+
+	var tetrahedron = new THREE.Mesh(  // add crimson tetrahedron
+	    new THREE.TetrahedronGeometry(0.7),
+		new THREE.MeshPhongMaterial({
+		    color: "crimson",
+			specular: 0x101010,
+			shininess: 25
+		})
+	);
+	tetrahedron.position.z = 4;
+	tetrahedronRotator = new THREE.Object3D();
+	tetrahedronRotator.add(tetrahedron);
+	model.add(tetrahedronRotator);
 
 	model.rotation.set(0.2,0,0); // Tip it forward a bit, so we're not looking at it edge-on.
 	
@@ -154,6 +171,9 @@ function updateForFrame() {
 	if (dodecahedronAnimating) {
 		dodecahedronRotator.rotation.x -= 0.01;
 		dodecahedronRotator.rotation.z -= 0.02;
+	}
+	if (tetrahedronAnimating) {
+		tetrahedronRotator.rotation.x += 0.02;
 	}
 }
 
@@ -215,6 +235,13 @@ function doAnimateCheckbox() {
     dodecahedronAnimating = document.getElementById("dodecahedronAnim").checked;
 }
 
+/* Responds when the setting of the "tetrahedron" checkbox is changed.  This
+ * function will start or stop the tetrahedron animation, depending on its setting.
+ */
+ function doTetrahedronCheckbox() {
+    tetrahedronAnimating = document.getElementById("tetrahedronAnim").checked;
+}
+
 
 //----------------------------- keyboard support ----------------------------------
 
@@ -272,6 +299,8 @@ function init() {
 	document.getElementById("torusAnim").onchange = doTorusCheckbox;
 	document.getElementById("dodecahedronAnim").checked = true;
 	document.getElementById("dodecahedronAnim").onchange = doDodecahedronCheckbox;
+	document.getElementById("tetrahedronAnim").checked = true;
+	document.getElementById("tetrahedronAnim").onchange = doTetrahedronCheckbox;
 	createWorld();
 	render();
 }
@@ -283,12 +312,14 @@ function init() {
 <h2>Project 3: Three.js Animated Model</h2>
 
 <p><b>Based on modeling-starter.html from the course readings.</b></p>
-<p><b>Use Arrow, PageUp, PageDown, and Home keys to rotate the model.</b></p>
+<p><b>Use Arrow, PageUp, PageDown, and Home keys to rotate the entire model.</b></p>
 <p><b>Check or uncheck the Animate All box to start/stop all animation.</b></p>
 <p><label><input type="checkbox" id="animate">Animate All</label></p>
 <p><b>Check or uncheck the boxes to turn individual shape animations on/off.</b></p>
+<p>(Has no effect if the "Animate All" checkbox is not selected.)</p>
 <p><label><label><input type="checkbox" id="dodecahedronAnim">Dodecahedron</label>
 <input type="checkbox" id="sphereAnim">Sphere</label>
+<input type="checkbox" id="tetrahedronAnim">Tetrahedron</label>
 <label><input type="checkbox" id="torusKnotAnim">Torus Knot</label>
 <label><input type="checkbox" id="torusAnim">Torus</label>
 </p>
